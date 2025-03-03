@@ -1,5 +1,13 @@
-import { IsOptional, IsString, IsDate } from 'class-validator';
-import { CreateEmployeeDTO } from './create-employee.dto';
+import {
+  IsOptional,
+  IsString,
+  IsDate,
+  ValidateNested,
+  Length,
+  IsInt,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { UpdateAddressDTO } from './update-address.dto';
 
 /**
  * @swagger
@@ -15,42 +23,54 @@ import { CreateEmployeeDTO } from './create-employee.dto';
  *         hireDate:
  *           type: string
  *           format: date
- *         department:
- *           type: string
+ *         departmentId:
+ *           type: integer
  *         phone:
  *           type: string
  *         address:
- *           type: string
+ *           $ref: '#/components/schemas/UpdateAddressDTO'
  *       example:
- *         firstName: John
- *         lastName: Doe
- *         hireDate: 2025-02-01
- *         department: IT
- *         phone: 123-456-7890
- *         address: 123 Main St
+ *         firstName: "John"
+ *         lastName: "Doe"
+ *         hireDate: "2025-02-01"
+ *         departmentId: 1
+ *         phone: "123-456-7890"
+ *         address:
+ *           streetName: "Evergreen Terrace"
+ *           streetNumber1: "742"
+ *           streetNumber2: "Apt. 1"
+ *           state: "Illinois"
+ *           city: "Springfield"
+ *           postcode: "12345"
+ *           countryId: 1
  */
-export class UpdateEmployeeDTO implements Partial<CreateEmployeeDTO> {
+export class UpdateEmployeeDTO {
   @IsOptional()
   @IsString()
+  @Length(1, 100)
   firstName?: string;
 
   @IsOptional()
   @IsString()
+  @Length(1, 100)
   lastName?: string;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   hireDate?: Date;
 
   @IsOptional()
-  @IsString()
-  department?: string;
+  @IsInt()
+  departmentId?: number;
 
   @IsOptional()
   @IsString()
+  @Length(1, 20)
   phone?: string;
 
   @IsOptional()
-  @IsString()
-  address?: string;
+  @ValidateNested()
+  @Type(() => UpdateAddressDTO)
+  address?: UpdateAddressDTO;
 }

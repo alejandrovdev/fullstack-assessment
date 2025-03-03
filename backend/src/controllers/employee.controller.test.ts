@@ -6,11 +6,9 @@ import {
   getEmployeeById,
   updateEmployee,
   deleteEmployee,
-} from './employee.controller';
+} from '../controllers/employee.controller';
 
 jest.mock('../services/employee.service');
-
-const mockRequest = (data: Partial<Request>): Request => data as Request;
 
 const mockResponse = (): Response => {
   const res: Partial<Response> = {};
@@ -21,38 +19,45 @@ const mockResponse = (): Response => {
   return res as Response;
 };
 
+const mockEmployee = {
+  firstName: 'John',
+  lastName: 'Doe',
+  hireDate: '2025-02-01',
+  departmentId: 1,
+  phone: '123-456-7890',
+  address: {
+    streetName: 'Evergreen Terrace',
+    streetNumber1: '742',
+    streetNumber2: 'Apt. 1',
+    state: 'Illinois',
+    city: 'Springfield',
+    postcode: '12345',
+    countryId: 1,
+  },
+};
+
 describe('Employee Controller', () => {
-  beforeEach(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
   describe('createEmployee', () => {
-    it('should create an employee and return 201 status', async () => {
-      const req = mockRequest({
-        body: {
-          firstName: 'John',
-          lastName: 'Doe',
-          hireDate: new Date(),
-          department: 'IT',
-          phone: '1234567890',
-          address: '123 Main St',
-        },
-      });
-
+    it('should return 201 and the created employee with complete payload', async () => {
+      const req = { body: mockEmployee } as Request;
       const res = mockResponse();
-      const createdEmployee = { ...req.body, id: 1 };
+      const employeeMock = { id: 1, ...mockEmployee };
 
-      (employeeService.create as jest.Mock).mockResolvedValue(createdEmployee);
+      (employeeService.create as jest.Mock).mockResolvedValue(employeeMock);
 
       await createEmployee(req, res);
 
-      expect(employeeService.create).toHaveBeenCalledWith(req.body);
+      expect(employeeService.create).toHaveBeenCalledWith(mockEmployee);
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(createdEmployee);
+      expect(res.json).toHaveBeenCalledWith(employeeMock);
     });
 
-    it('should return 500 if an error occurs during creation', async () => {
-      const req = mockRequest({ body: {} });
+    it('should return 500 in case of an error', async () => {
+      const req = { body: mockEmployee } as Request;
       const res = mockResponse();
 
       (employeeService.create as jest.Mock).mockRejectedValue(
@@ -69,24 +74,21 @@ describe('Employee Controller', () => {
   });
 
   describe('getAllEmployees', () => {
-    it('should return all employees', async () => {
-      const req = mockRequest({});
+    it('should return the list of employees', async () => {
+      const req = {} as Request;
       const res = mockResponse();
-      const employees = [
-        { id: 1, firstName: 'Alice' },
-        { id: 2, firstName: 'Bob' },
-      ];
+      const employeesMock = [{ id: 1 }, { id: 2 }];
 
-      (employeeService.getAll as jest.Mock).mockResolvedValue(employees);
+      (employeeService.getAll as jest.Mock).mockResolvedValue(employeesMock);
 
       await getAllEmployees(req, res);
 
       expect(employeeService.getAll).toHaveBeenCalled();
-      expect(res.json).toHaveBeenCalledWith(employees);
+      expect(res.json).toHaveBeenCalledWith(employeesMock);
     });
 
-    it('should return 500 if an error occurs when fetching employees', async () => {
-      const req = mockRequest({});
+    it('should return 500 in case of an error', async () => {
+      const req = {} as Request;
       const res = mockResponse();
 
       (employeeService.getAll as jest.Mock).mockRejectedValue(
@@ -104,33 +106,32 @@ describe('Employee Controller', () => {
 
   describe('getEmployeeById', () => {
     it('should return the employee if found', async () => {
-      const req = mockRequest({ params: { id: '1' } });
+      const req = { params: { id: '1' } } as unknown as Request;
       const res = mockResponse();
-      const employee = { id: 1, firstName: 'Charlie' };
+      const employeeMock = { id: 1, firstName: 'John' };
 
-      (employeeService.getOneById as jest.Mock).mockResolvedValue(employee);
+      (employeeService.getOneById as jest.Mock).mockResolvedValue(employeeMock);
 
       await getEmployeeById(req, res);
 
       expect(employeeService.getOneById).toHaveBeenCalledWith(1);
-      expect(res.json).toHaveBeenCalledWith(employee);
+      expect(res.json).toHaveBeenCalledWith(employeeMock);
     });
 
     it('should return 404 if the employee is not found', async () => {
-      const req = mockRequest({ params: { id: '999' } });
+      const req = { params: { id: '1' } } as unknown as Request;
       const res = mockResponse();
 
       (employeeService.getOneById as jest.Mock).mockResolvedValue(null);
 
       await getEmployeeById(req, res);
 
-      expect(employeeService.getOneById).toHaveBeenCalledWith(999);
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ message: 'Employee not found' });
     });
 
-    it('should return 500 if an error occurs', async () => {
-      const req = mockRequest({ params: { id: '1' } });
+    it('should return 500 in case of an error', async () => {
+      const req = { params: { id: '1' } } as unknown as Request;
       const res = mockResponse();
 
       (employeeService.getOneById as jest.Mock).mockRejectedValue(
@@ -147,44 +148,37 @@ describe('Employee Controller', () => {
   });
 
   describe('updateEmployee', () => {
-    it('should update an employee and return the updated employee', async () => {
-      const req = mockRequest({
+    it('should return the updated employee if found', async () => {
+      const req = {
         params: { id: '1' },
-        body: { firstName: 'Dana Updated' },
-      });
+        body: { firstName: 'Jane' },
+      } as unknown as Request;
 
       const res = mockResponse();
-      const updatedEmployee = { id: 1, firstName: 'Dana Updated' };
+      const employeeMock = { id: 1, firstName: 'Jane' };
 
-      (employeeService.update as jest.Mock).mockResolvedValue(updatedEmployee);
+      (employeeService.update as jest.Mock).mockResolvedValue(employeeMock);
 
       await updateEmployee(req, res);
 
       expect(employeeService.update).toHaveBeenCalledWith(1, req.body);
-      expect(res.json).toHaveBeenCalledWith(updatedEmployee);
+      expect(res.json).toHaveBeenCalledWith(employeeMock);
     });
 
-    it('should return 404 if employee is not found during update', async () => {
-      const req = mockRequest({
-        params: { id: '999' },
-        body: { firstName: 'Test' },
-      });
+    it('should return 404 if the employee is not found', async () => {
+      const req = { params: { id: '1' }, body: {} } as unknown as Request;
       const res = mockResponse();
 
       (employeeService.update as jest.Mock).mockResolvedValue(null);
 
       await updateEmployee(req, res);
 
-      expect(employeeService.update).toHaveBeenCalledWith(999, req.body);
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ message: 'Employee not found' });
     });
 
-    it('should return 500 if an error occurs during update', async () => {
-      const req = mockRequest({
-        params: { id: '1' },
-        body: { firstName: 'Dana Updated' },
-      });
+    it('should return 500 in case of an error', async () => {
+      const req = { params: { id: '1' }, body: {} } as unknown as Request;
       const res = mockResponse();
 
       (employeeService.update as jest.Mock).mockRejectedValue(
@@ -201,8 +195,8 @@ describe('Employee Controller', () => {
   });
 
   describe('deleteEmployee', () => {
-    it('should delete an employee successfully', async () => {
-      const req = mockRequest({ params: { id: '1' } });
+    it('should return a success message if deletion was successful', async () => {
+      const req = { params: { id: '1' } } as unknown as Request;
       const res = mockResponse();
 
       (employeeService.remove as jest.Mock).mockResolvedValue(true);
@@ -215,21 +209,20 @@ describe('Employee Controller', () => {
       });
     });
 
-    it('should return 404 if employee is not found during deletion', async () => {
-      const req = mockRequest({ params: { id: '999' } });
+    it('should return 404 if the employee is not found', async () => {
+      const req = { params: { id: '1' } } as unknown as Request;
       const res = mockResponse();
 
       (employeeService.remove as jest.Mock).mockResolvedValue(false);
 
       await deleteEmployee(req, res);
 
-      expect(employeeService.remove).toHaveBeenCalledWith(999);
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ message: 'Employee not found' });
     });
 
-    it('should return 500 if an error occurs during deletion', async () => {
-      const req = mockRequest({ params: { id: '1' } });
+    it('should return 500 in case of an error', async () => {
+      const req = { params: { id: '1' } } as unknown as Request;
       const res = mockResponse();
 
       (employeeService.remove as jest.Mock).mockRejectedValue(

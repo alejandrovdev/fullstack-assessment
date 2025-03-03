@@ -1,169 +1,199 @@
-const mockRepository = {
-  create: jest.fn(),
-  save: jest.fn(),
-  find: jest.fn(),
-  findOneBy: jest.fn(),
-  merge: jest.fn(),
-  delete: jest.fn(),
-};
-
-jest.mock('../config/data-source', () => ({
-  AppDataSource: {
-    getRepository: jest.fn(() => mockRepository),
-  },
-}));
-
-import * as employeeService from './employee.service';
+import { AppDataSource } from '../config/data-source';
+import {
+  create,
+  getAll,
+  getOneById,
+  update,
+  remove,
+} from '../services/employee.service';
+import { CreateEmployeeDTO } from '../dto/create-employee.dto';
+import { UpdateEmployeeDTO } from '../dto/update-employee.dto';
+import { Country } from '../entities/country.entity';
 import { Employee } from '../entities/employee.entity';
 
-describe('Employee Service', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+jest.mock('../config/data-source', () => {
+  const mockCountry = {
+    id: 1,
+    code: 'US',
+    name: 'United States',
+    emoji: '🇺🇸',
+  };
 
-  describe('create', () => {
-    it('should create and save an employee', async () => {
-      const inputData: Partial<Employee> = {
-        firstName: 'John',
-        lastName: 'Doe',
-        hireDate: new Date(),
-        department: 'IT',
-        phone: '1234567890',
-        address: '123 Main St',
-      };
+  const mockEmployee = {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    hireDate: new Date('2025-02-01'),
+    departmentId: 1,
+    phone: '123-456-7890',
+    address: {
+      id: 1,
+      streetName: 'Evergreen Terrace',
+      streetNumber1: '742',
+      streetNumber2: 'Apt. 1',
+      state: 'Illinois',
+      city: 'Springfield',
+      postcode: '12345',
+      countryId: 1,
+      country: mockCountry,
+      employee: undefined,
+    },
+  };
 
-      mockRepository.create.mockReturnValue(inputData);
-      mockRepository.save.mockResolvedValue({ ...inputData, id: 1 });
+  const deletedEmployeeIds: number[] = [];
 
-      const result = await employeeService.create(inputData);
-
-      expect(mockRepository.create).toHaveBeenCalledWith(inputData);
-      expect(mockRepository.save).toHaveBeenCalledWith(inputData);
-      expect(result).toEqual({ ...inputData, id: 1 });
-    });
-  });
-
-  describe('getAll', () => {
-    it('should return an array of employees', async () => {
-      const employees = [
-        {
+  const mockRepository = {
+    create: jest.fn().mockImplementation((data) => {
+      return { ...data, id: data.id || 1 };
+    }),
+    save: jest.fn().mockImplementation((data) => {
+      if (data.address) {
+        data.address = {
+          ...data.address,
           id: 1,
-          firstName: 'Alice',
-          lastName: 'Smith',
-          hireDate: new Date(),
-          department: 'HR',
-          phone: '1111111111',
-          address: 'Address 1',
-        },
-        {
-          id: 2,
-          firstName: 'Bob',
-          lastName: 'Brown',
-          hireDate: new Date(),
-          department: 'Finance',
-          phone: '2222222222',
-          address: 'Address 2',
-        },
-      ];
+          country: mockCountry,
+          employee: data,
+        };
+      }
+      return Promise.resolve({ ...data, id: data.id || 1 });
+    }),
+    delete: jest.fn().mockImplementation((id: number) => {
+      deletedEmployeeIds.push(id);
+      return Promise.resolve({ affected: 1 });
+    }),
+    find: jest.fn().mockResolvedValue([mockEmployee]),
+    findOne: jest
+      .fn()
+      .mockImplementation(({ where: { id } }: { where: { id: number } }) => {
+        if (id === 1 && !deletedEmployeeIds.includes(id)) {
+          return Promise.resolve(mockEmployee);
+        } else {
+          return Promise.resolve(null);
+        }
+      }),
+    findOneBy: jest.fn().mockImplementation((criteria: { id: number }) => {
+      if (criteria.id === 1 && !deletedEmployeeIds.includes(criteria.id)) {
+        return Promise.resolve(mockEmployee);
+      } else {
+        return Promise.resolve(null);
+      }
+    }),
+    findOneOrFail: jest
+      .fn()
+      .mockImplementation(({ where: { id } }: { where: { id: number } }) => {
+        if (id === 1 && !deletedEmployeeIds.includes(id)) {
+          return Promise.resolve(mockEmployee);
+        } else {
+          return Promise.reject(new Error('Not found'));
+        }
+      }),
+    merge: jest.fn().mockImplementation((target, source) => {
+      return Object.assign(target, source);
+    }),
+  };
 
-      mockRepository.find.mockResolvedValue(employees);
+  return {
+    AppDataSource: {
+      initialize: jest.fn().mockResolvedValue(true),
+      destroy: jest.fn().mockResolvedValue(true),
+      getRepository: jest.fn(() => mockRepository),
+    },
+  };
+});
 
-      const result = await employeeService.getAll();
+describe('Employee Service)', () => {
+  let testCountry: Country;
+  let createdEmployee: Employee;
 
-      expect(mockRepository.find).toHaveBeenCalled();
-      expect(result).toEqual(employees);
-    });
+  beforeAll(async () => {
+    await AppDataSource.initialize();
+
+    testCountry = {
+      id: 1,
+      code: 'US',
+      name: 'United States',
+      emoji: '🇺🇸',
+    } as Country;
   });
 
-  describe('getOneById', () => {
-    it('should return an employee when found', async () => {
-      const employee = {
-        id: 1,
-        firstName: 'Charlie',
-        lastName: 'Davis',
-        hireDate: new Date(),
-        department: 'Sales',
-        phone: '3333333333',
-        address: 'Address 3',
-      };
-
-      mockRepository.findOneBy.mockResolvedValue(employee);
-
-      const result = await employeeService.getOneById(1);
-
-      expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
-      expect(result).toEqual(employee);
-    });
-
-    it('should return null when employee is not found', async () => {
-      mockRepository.findOneBy.mockResolvedValue(null);
-
-      const result = await employeeService.getOneById(999);
-
-      expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id: 999 });
-      expect(result).toBeNull();
-    });
+  afterAll(async () => {
+    await AppDataSource.destroy();
   });
 
-  describe('update', () => {
-    it('should update an employee if found', async () => {
-      const existing = {
-        id: 1,
-        firstName: 'Dana',
-        lastName: 'Evans',
-        hireDate: new Date(),
-        department: 'Marketing',
-        phone: '4444444444',
-        address: 'Address 4',
-      };
+  it('should create an employee with full mock data', async () => {
+    const employeeData: CreateEmployeeDTO = {
+      firstName: 'John',
+      lastName: 'Doe',
+      hireDate: new Date('2025-02-01'),
+      departmentId: 1,
+      phone: '123-456-7890',
+      address: {
+        streetName: 'Evergreen Terrace',
+        streetNumber1: '742',
+        streetNumber2: 'Apt. 1',
+        state: 'Illinois',
+        city: 'Springfield',
+        postcode: '12345',
+        countryId: testCountry.id as number,
+      },
+    };
 
-      mockRepository.findOneBy.mockResolvedValue(existing);
-      mockRepository.merge.mockImplementation((emp, data) =>
-        Object.assign(emp, data),
-      );
+    createdEmployee = await create(employeeData);
 
-      const updatedData: Partial<Employee> = {
-        firstName: 'Dana Updated',
-        department: 'Marketing Updated',
-      };
-
-      mockRepository.save.mockResolvedValue({ ...existing, ...updatedData });
-
-      const result = await employeeService.update(1, updatedData);
-
-      expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id: 1 });
-      expect(mockRepository.merge).toHaveBeenCalledWith(existing, updatedData);
-      expect(mockRepository.save).toHaveBeenCalledWith(existing);
-      expect(result).toEqual({ ...existing, ...updatedData });
-    });
-
-    it('should return null if employee is not found', async () => {
-      mockRepository.findOneBy.mockResolvedValue(null);
-
-      const result = await employeeService.update(999, { firstName: 'Test' });
-
-      expect(mockRepository.findOneBy).toHaveBeenCalledWith({ id: 999 });
-      expect(result).toBeNull();
-    });
+    expect(createdEmployee).toBeDefined();
+    expect(createdEmployee.firstName).toBe('John');
+    expect(createdEmployee.address).toBeDefined();
+    expect(createdEmployee.address.city).toBe('Springfield');
+    expect(createdEmployee.address.country).toEqual(testCountry);
   });
 
-  describe('remove', () => {
-    it('should return true if deletion was successful', async () => {
-      mockRepository.delete.mockResolvedValue({ affected: 1 });
+  it('should get all employees with full mock data', async () => {
+    const employees = await getAll();
 
-      const result = await employeeService.remove(1);
+    expect(Array.isArray(employees)).toBe(true);
+    expect(employees.length).toBeGreaterThan(0);
+    expect(employees[0]).toHaveProperty('firstName', 'John');
+    expect(employees[0]).toHaveProperty('address');
+    expect(employees[0].address).toHaveProperty('city', 'Springfield');
+    expect(employees[0].address).toHaveProperty('country');
+    expect(employees[0].address.country).toEqual(testCountry);
+  });
 
-      expect(mockRepository.delete).toHaveBeenCalledWith(1);
-      expect(result).toBe(true);
-    });
+  it('should get one employee by id with full mock data', async () => {
+    const employee = await getOneById(createdEmployee.id as number);
 
-    it('should return false if deletion was not successful', async () => {
-      mockRepository.delete.mockResolvedValue({ affected: 0 });
+    expect(employee).toBeDefined();
+    expect(employee?.id).toBe(1);
+    expect(employee?.address).toBeDefined();
+    expect(employee?.address.country).toEqual(testCountry);
+  });
 
-      const result = await employeeService.remove(999);
+  it('should update an employee with full mock data', async () => {
+    const updateData: UpdateEmployeeDTO = {
+      firstName: 'Jane',
+      address: {
+        city: 'New Springfield',
+      },
+    };
 
-      expect(mockRepository.delete).toHaveBeenCalledWith(999);
-      expect(result).toBe(false);
-    });
+    const updatedEmployee = await update(
+      createdEmployee.id as number,
+      updateData,
+    );
+
+    expect(updatedEmployee).toBeDefined();
+    expect(updatedEmployee?.firstName).toBe('Jane');
+    expect(updatedEmployee?.address.city).toBe('New Springfield');
+    expect(updatedEmployee?.address.country).toEqual(testCountry);
+  });
+
+  it('should remove an employee and return null on subsequent get', async () => {
+    const result = await remove(createdEmployee.id as number);
+
+    expect(result).toBe(true);
+
+    const employeeAfterDelete = await getOneById(createdEmployee.id as number);
+
+    expect(employeeAfterDelete).toBeNull();
   });
 });

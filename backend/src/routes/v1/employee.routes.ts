@@ -6,7 +6,8 @@ import {
   updateEmployee,
   deleteEmployee,
 } from '../../controllers/employee.controller';
-import { Employee } from '../../entities/employee.entity';
+import { CreateEmployeeDTO } from '../../dto/create-employee.dto';
+import { UpdateEmployeeDTO } from '../../dto/update-employee.dto';
 import { validationMiddleware } from '../../middlewares/validation.middleware';
 import { asyncHandler } from '../../middlewares/async-handler.middleware';
 
@@ -27,12 +28,20 @@ const router = Router();
  *     responses:
  *       201:
  *         description: Employee created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Employee'
  *       400:
  *         description: Invalid input data
  *       500:
  *         description: Internal server error
  */
-router.post('/', validationMiddleware(Employee), asyncHandler(createEmployee));
+router.post(
+  '/',
+  validationMiddleware(CreateEmployeeDTO),
+  asyncHandler(createEmployee),
+);
 
 /**
  * @swagger
@@ -103,6 +112,10 @@ router.get('/:id', asyncHandler(getEmployeeById));
  *     responses:
  *       200:
  *         description: Employee updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Employee'
  *       400:
  *         description: Invalid input data
  *       404:
@@ -112,7 +125,7 @@ router.get('/:id', asyncHandler(getEmployeeById));
  */
 router.put(
   '/:id',
-  validationMiddleware(Employee),
+  validationMiddleware(UpdateEmployeeDTO),
   asyncHandler(updateEmployee),
 );
 

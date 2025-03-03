@@ -1,6 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
-import { IsNotEmpty, IsString, IsDate, IsOptional } from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToOne,
+  JoinColumn,
+  RelationId,
+  OneToOne,
+} from 'typeorm';
+import { IsNotEmpty, IsString, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Department } from './department.entity';
+import { Address } from './address.entity';
 
 /**
  * @swagger
@@ -15,58 +26,97 @@ import { Type } from 'class-transformer';
  *           type: string
  *         lastName:
  *           type: string
+ *         phone:
+ *           type: string
  *         hireDate:
  *           type: string
  *           format: date
+ *         departmentId:
+ *           type: integer
  *         department:
- *           type: string
- *         phone:
- *           type: string
+ *           $ref: '#/components/schemas/Department'
+ *         addressId:
+ *           type: integer
  *         address:
- *           type: string
+ *           $ref: '#/components/schemas/Address'
  *       example:
  *         id: 1
- *         firstName: John
- *         lastName: Doe
- *         hireDate: 2025-02-01
- *         department: IT
- *         phone: 123-456-7890
- *         address: 123 Main St
+ *         firstName: "John"
+ *         lastName: "Doe"
+ *         phone: "555-1234"
+ *         hireDate: "2025-01-01"
+ *         departmentId: 10
+ *         addressId: 5
+ *         address:
+ *           id: 5
+ *           streetName: "Evergreen Terrace"
+ *           streetNumber1: "742"
+ *           streetNumber2: "A"
+ *           state: "Springfield"
+ *           city: "Springfield"
+ *           postcode: "12345"
+ *           countryId: 1
  */
 @Entity({ name: 'employees' })
 export class Employee extends BaseEntity {
   @PrimaryGeneratedColumn({ name: 'id' })
-  @IsOptional()
   id?: number;
 
-  @Column({ name: 'first_name' })
+  @Column({
+    name: 'first_name',
+    type: 'varchar',
+    length: 100,
+  })
   @IsNotEmpty()
   @IsString()
   firstName!: string;
 
-  @Column({ name: 'last_name' })
+  @Column({
+    name: 'last_name',
+    type: 'varchar',
+    length: 100,
+  })
   @IsNotEmpty()
   @IsString()
   lastName!: string;
 
-  @Column({ name: 'hire_date' })
+  @Column({
+    name: 'phone',
+    type: 'varchar',
+    length: 20,
+  })
+  @IsNotEmpty()
+  @IsString()
+  phone!: string;
+
+  @Column({
+    name: 'hire_date',
+    type: 'date',
+  })
   @IsNotEmpty()
   @IsDate()
   @Type(() => Date)
   hireDate!: Date;
 
-  @Column({ name: 'department' })
+  @Column({
+    name: 'department_id',
+    type: 'integer',
+  })
   @IsNotEmpty()
-  @IsString()
-  department!: string;
+  @RelationId((employee: Employee) => employee.department)
+  departmentId!: number;
 
-  @Column({ name: 'phone' })
+  @ManyToOne(() => Department, (department) => department.employees, {
+    onDelete: 'NO ACTION',
+  })
+  @JoinColumn({ name: 'department_id' })
   @IsNotEmpty()
-  @IsString()
-  phone!: string;
+  department!: Department;
 
-  @Column({ name: 'address' })
+  @OneToOne(() => Address, (address) => address.employee, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'address_id' })
   @IsNotEmpty()
-  @IsString()
-  address!: string;
+  address!: Address;
 }

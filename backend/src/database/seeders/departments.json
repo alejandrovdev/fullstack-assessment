@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "code": "it",
+    "name": "IT"
+  },
+  {
+    "id": 2,
+    "code": "hr",
+    "name": "HR"
+  },
+  {
+    "id": 3,
+    "code": "finance",
+    "name": "Finance"
+  },
+  {
+    "id": 4,
+    "code": "marketing",
+    "name": "Marketing"
+  },
+  {
+    "id": 5,
+    "code": "sales",
+    "name": "Sales"
+  },
+  {
+    "id": 6,
+    "code": "operations",
+    "name": "Operations"
+  },
+  {
+    "id": 7,
+    "code": "legal",
+    "name": "Legal"
+  },
+  {
+    "id": 8,
+    "code": "customer-support",
+    "name": "Customer Support"
+  },
+  {
+    "id": 9,
+    "code": "research-and-development",
+    "name": "Research and Development"
+  },
+  {
+    "id": 10,
+    "code": "administration",
+    "name": "Administration"
+  }
+]
