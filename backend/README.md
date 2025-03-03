@@ -55,6 +55,8 @@ This repository contains a backend application that demonstrates a typical CRUD 
   DB_PASSWORD=pass
   DB_NAME=fullstack_assessment
   PORT=3000
+  DB_SYNCHRONIZE=true
+  DB_LOGGING=true
   ```
 
 3. **Run database container**:
@@ -78,7 +80,7 @@ This command starts the server in development mode, listening on the port specif
 Then run:
 
 ```bash
-pnpm run dev
+pnpm run db:migrate
 ```
 
 This will populate the countries and departments tables.
