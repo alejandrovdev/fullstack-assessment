@@ -1,0 +1,162 @@
+[
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "phone": "555-1234",
+    "hireDate": "2025-01-01",
+    "departmentId": 1,
+    "address": {
+      "streetName": "Evergreen Terrace",
+      "streetNumber1": "742",
+      "streetNumber2": "A",
+      "state": "Springfield",
+      "city": "Springfield",
+      "postcode": "12345",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "phone": "555-6789",
+    "hireDate": "2024-09-15",
+    "departmentId": 2,
+    "address": {
+      "streetName": "Baker Street",
+      "streetNumber1": "221B",
+      "streetNumber2": "",
+      "state": "London",
+      "city": "London",
+      "postcode": "NW1 6XE",
+      "countryId": 44
+    }
+  },
+  {
+    "firstName": "Bob",
+    "lastName": "Johnson",
+    "phone": "555-9876",
+    "hireDate": "2023-05-20",
+    "departmentId": 3,
+    "address": {
+      "streetName": "Main Street",
+      "streetNumber1": "101",
+      "streetNumber2": "Suite 1",
+      "state": "California",
+      "city": "Los Angeles",
+      "postcode": "90001",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "Carol",
+    "lastName": "Williams",
+    "phone": "555-2468",
+    "hireDate": "2022-12-10",
+    "departmentId": 4,
+    "address": {
+      "streetName": "Oak Avenue",
+      "streetNumber1": "202",
+      "streetNumber2": "B",
+      "state": "Texas",
+      "city": "Dallas",
+      "postcode": "75001",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "David",
+    "lastName": "Brown",
+    "phone": "555-1357",
+    "hireDate": "2023-07-05",
+    "departmentId": 5,
+    "address": {
+      "streetName": "Maple Street",
+      "streetNumber1": "303",
+      "streetNumber2": "C",
+      "state": "Illinois",
+      "city": "Chicago",
+      "postcode": "60601",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "Eva",
+    "lastName": "Davis",
+    "phone": "555-8642",
+    "hireDate": "2024-03-11",
+    "departmentId": 6,
+    "address": {
+      "streetName": "Pine Road",
+      "streetNumber1": "404",
+      "streetNumber2": "",
+      "state": "Florida",
+      "city": "Miami",
+      "postcode": "33101",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "Frank",
+    "lastName": "Miller",
+    "phone": "555-1122",
+    "hireDate": "2021-11-30",
+    "departmentId": 7,
+    "address": {
+      "streetName": "Elm Street",
+      "streetNumber1": "505",
+      "streetNumber2": "",
+      "state": "Nevada",
+      "city": "Las Vegas",
+      "postcode": "89101",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "Grace",
+    "lastName": "Wilson",
+    "phone": "555-3344",
+    "hireDate": "2022-06-25",
+    "departmentId": 8,
+    "address": {
+      "streetName": "Cedar Lane",
+      "streetNumber1": "606",
+      "streetNumber2": "D",
+      "state": "Georgia",
+      "city": "Atlanta",
+      "postcode": "30301",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "Henry",
+    "lastName": "Taylor",
+    "phone": "555-5566",
+    "hireDate": "2020-08-14",
+    "departmentId": 9,
+    "address": {
+      "streetName": "Birch Boulevard",
+      "streetNumber1": "707",
+      "streetNumber2": "E",
+      "state": "New York",
+      "city": "New York",
+      "postcode": "10001",
+      "countryId": 1
+    }
+  },
+  {
+    "firstName": "Isabella",
+    "lastName": "Martinez",
+    "phone": "555-7788",
+    "hireDate": "2023-02-28",
+    "departmentId": 10,
+    "address": {
+      "streetName": "Sunset Strip",
+      "streetNumber1": "808",
+      "streetNumber2": "F",
+      "state": "California",
+      "city": "Los Angeles",
+      "postcode": "90028",
+      "countryId": 1
+    }
+  }
+]

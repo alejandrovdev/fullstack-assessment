@@ -5,8 +5,8 @@ import {
   BaseEntity,
   ManyToOne,
   JoinColumn,
-  RelationId,
   OneToOne,
+  RelationId,
 } from 'typeorm';
 import { IsNotEmpty, IsString, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -35,8 +35,6 @@ import { Address } from './address.entity';
  *           type: integer
  *         department:
  *           $ref: '#/components/schemas/Department'
- *         addressId:
- *           type: integer
  *         address:
  *           $ref: '#/components/schemas/Address'
  *       example:
@@ -46,7 +44,6 @@ import { Address } from './address.entity';
  *         phone: "555-1234"
  *         hireDate: "2025-01-01"
  *         departmentId: 10
- *         addressId: 5
  *         address:
  *           id: 5
  *           streetName: "Evergreen Terrace"
@@ -98,11 +95,6 @@ export class Employee extends BaseEntity {
   @Type(() => Date)
   hireDate!: Date;
 
-  @Column({
-    name: 'department_id',
-    type: 'integer',
-  })
-  @IsNotEmpty()
   @RelationId((employee: Employee) => employee.department)
   departmentId!: number;
 
@@ -116,7 +108,5 @@ export class Employee extends BaseEntity {
   @OneToOne(() => Address, (address) => address.employee, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'address_id' })
-  @IsNotEmpty()
   address!: Address;
 }

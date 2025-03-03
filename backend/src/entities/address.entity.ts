@@ -5,8 +5,8 @@ import {
   BaseEntity,
   ManyToOne,
   JoinColumn,
-  RelationId,
   OneToOne,
+  RelationId,
 } from 'typeorm';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Country } from './country.entity';
@@ -118,7 +118,6 @@ export class Address extends BaseEntity {
 
   @ManyToOne(() => Country, (country) => country.addresses, {
     onDelete: 'RESTRICT',
-    lazy: true,
   })
   @JoinColumn({ name: 'country_id' })
   @IsNotEmpty()

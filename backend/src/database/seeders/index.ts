@@ -1,6 +1,7 @@
 import { AppDataSource } from '../../config/data-source';
 import { seedCountries } from './country-seeder';
 import { seedDepartments } from './department-seeder';
+import { seedEmployees } from './employees-seeder';
 
 AppDataSource.initialize()
   .then(async () => {
@@ -8,6 +9,7 @@ AppDataSource.initialize()
 
     await seedCountries();
     await seedDepartments();
+    await seedEmployees();
 
     console.log('All seeders executed successfully.');
 
