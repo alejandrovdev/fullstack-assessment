@@ -67,15 +67,23 @@ This repository contains a backend application that demonstrates a typical CRUD 
 
 ## Running the Application
 
-Once you have the environment set up:
+Once you have the environment set up, run:
 
 ```bash
 pnpm run dev
 ```
 
-This command starts the server in development mode, listening on the port specified in your `.env`.
+This command starts the server in development mode, listening on the port specified in your `.env` and will create the migrations automatically.
 
-- Open `http://localhost:3000` in your browser or use a tool like **Postman** to interact with the endpoints.
+Then run:
+
+```bash
+pnpm run dev
+```
+
+This will populate the countries and departments tables.
+
+Open `http://localhost:3000` in your browser or use a tool like **Postman** to interact with the endpoints.
 
 ## API Endpoints
 
@@ -83,6 +91,8 @@ Below is a general overview of the endpoints defined in `employee.routes.ts` and
 
 | Method | Endpoint         | Description                   | Request Body                                         |
 | ------ | ---------------- | ----------------------------- | ---------------------------------------------------- |
+| GET    | `/countries`     | Retrieves all countries       | _None_                                               |
+| GET    | `/departments`   | Retrieves all departments     | _None_                                               |
 | GET    | `/employees`     | Retrieves all employees       | _None_                                               |
 | GET    | `/employees/:id` | Retrieves a specific employee | _None_                                               |
 | POST   | `/employees`     | Creates a new employee        | `{ firstName, lastName, hireDate, department, ... }` |
@@ -95,10 +105,22 @@ You can interact directly with the API through swagger by entering to `http://lo
 
 ### Example Requests
 
-1. **Create Employee** (POST `/employees`):
+1. **Get All Countries** (GET `/countries`):
 
    ```bash
-   curl -X POST http://localhost:3000/employees \
+   curl http://localhost:3000/api/v1/countries
+   ```
+
+2. **Get All Departments** (GET `/departments`):
+
+   ```bash
+   curl http://localhost:3000/api/v1/departments
+   ```
+
+3. **Create Employee** (POST `/employees`):
+
+   ```bash
+   curl -X POST http://localhost:3000/api/v1/employees \
      -H "Content-Type: application/json" \
      -d '{
        "firstName": "John",
@@ -110,22 +132,22 @@ You can interact directly with the API through swagger by entering to `http://lo
      }'
    ```
 
-2. **Get All Employees** (GET `/employees`):
+4. **Get All Employees** (GET `/employees`):
 
    ```bash
-   curl http://localhost:3000/employees
+   curl http://localhost:3000/api/v1/employees
    ```
 
-3. **Get Employee by ID** (GET `/employees/1`):
+5. **Get Employee by ID** (GET `/employees/1`):
 
    ```bash
-   curl http://localhost:3000/employees/1
+   curl http://localhost:3000/api/v1/employees/1
    ```
 
-4. **Update Employee** (PUT `/employees/1`):
+6. **Update Employee** (PUT `/employees/1`):
 
    ```bash
-   curl -X PUT http://localhost:3000/employees/1 \
+   curl -X PUT http://localhost:3000/api/v1/employees/1 \
      -H "Content-Type: application/json" \
      -d '{
        "department": "Marketing",
@@ -133,10 +155,10 @@ You can interact directly with the API through swagger by entering to `http://lo
      }'
    ```
 
-5. **Delete Employee** (DELETE `/employees/1`):
+7. **Delete Employee** (DELETE `/employees/1`):
 
    ```bash
-   curl -X DELETE http://localhost:3000/employees/1
+   curl -X DELETE http://localhost:3000/api/v1/employees/1
    ```
 
 ## Testing
