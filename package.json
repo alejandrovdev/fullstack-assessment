@@ -1,0 +1,9 @@
+{
+    "name": "fullstack-assessment",
+    "description": "fullstack assessment for employee management application",
+    "version": "1.0.0",
+    "scripts": {
+      "dev": "pnpm -r dev"
+    }
+  }
+  
