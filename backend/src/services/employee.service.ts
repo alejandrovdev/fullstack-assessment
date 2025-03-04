@@ -25,6 +25,8 @@ export const create = async (data: CreateEmployeeDTO): Promise<Employee> => {
 
   const savedAddress = await addressRepository.save(address);
 
+  console.log(data.departmentId);
+
   const employee = employeeRepository.create({
     firstName: data.firstName,
     lastName: data.lastName,

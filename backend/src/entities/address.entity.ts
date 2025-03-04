@@ -6,9 +6,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
-  RelationId,
 } from 'typeorm';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Country } from './country.entity';
 import { Employee } from './employee.entity';
 
@@ -113,7 +112,12 @@ export class Address extends BaseEntity {
   @IsString()
   postcode!: string;
 
-  @RelationId((address: Address) => address.country)
+  @Column({
+    name: 'country_id',
+    type: 'integer',
+  })
+  @IsNotEmpty()
+  @IsInt()
   countryId!: number;
 
   @ManyToOne(() => Country, (country) => country.addresses, {

@@ -6,9 +6,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
-  RelationId,
 } from 'typeorm';
-import { IsNotEmpty, IsString, IsDate } from 'class-validator';
+import { IsNotEmpty, IsString, IsDate, IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Department } from './department.entity';
 import { Address } from './address.entity';
@@ -95,7 +94,12 @@ export class Employee extends BaseEntity {
   @Type(() => Date)
   hireDate!: Date;
 
-  @RelationId((employee: Employee) => employee.department)
+  @Column({
+    name: 'department_id',
+    type: 'integer',
+  })
+  @IsNotEmpty()
+  @IsInt()
   departmentId!: number;
 
   @ManyToOne(() => Department, (department) => department.employees, {

@@ -27,6 +27,22 @@ interface ICreateEmployee extends Omit<IEmployee, 'hireDate'> {
   hireDate: Dayjs;
 }
 
+const initialValues = {
+  firstName: 'John',
+  lastName: 'Doe',
+  phone: '555-1234',
+  departmentId: 1,
+  address: {
+    streetName: 'Evergreen Terrace',
+    streetNumber1: '742',
+    streetNumber2: 'A',
+    state: 'Springfield',
+    city: 'Springfield',
+    postcode: '12345',
+    countryId: 1,
+  },
+};
+
 const EmployeeForm: FC<IEmployeeFormProps> = (props) => {
   const { onSuccess, onError, onCancel, formProps } = props;
 
@@ -136,6 +152,7 @@ const EmployeeForm: FC<IEmployeeFormProps> = (props) => {
         labelWrap={true}
         autoComplete="off"
         onFinish={handleSubmit}
+        initialValues={initialValues}
       >
         <Form.Item
           label="First Name"
