@@ -13,24 +13,27 @@ This is a monorepo for the Fullstack Assessment project. It contains both the fr
 To run the monorepo, follow these steps:
 
 1. **Clone the repository:**
-    ```sh
-    git clone https://github.com/yourusername/fullstack-assessment.git
-    cd fullstack-assessment
-    ```
+
+   ```sh
+   git clone https://github.com/alejandrovdev/fullstack-assessment
+   cd fullstack-assessment
+   ```
 
 2. **Install dependencies:**
-    ```sh
-    pnpm install
-    ```
+
+   ```sh
+   pnpm install
+   ```
 
 3. **Run the frontend:**
-    ```sh
-    cd frontend
-    pnpm run dev
-    ```
+
+   ```sh
+   cd frontend
+   pnpm run dev
+   ```
 
 4. **Run the backend:**
-    For detailed instructions on how to run the backend, please refer to the backend README.
+   For detailed instructions on how to run the backend, please refer to the backend README.
 
 ## Additional Information
 
